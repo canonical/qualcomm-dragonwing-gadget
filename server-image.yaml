@@ -1,0 +1,106 @@
+name: ubuntu-server-qualcomm-dragonwing-arm64
+display-name: Ubuntu Server Qualcomm Dragonwing arm64
+revision: 2
+architecture: arm64
+series: noble
+class: preinstalled
+kernel: linux-image-qcom
+gadget:
+  url: https://github.com/canonical/qualcomm-dragonwing-gadget.git
+  type: git
+  branch: noble
+rootfs:
+  mirror: http://ports.ubuntu.com/ubuntu-ports/
+  pocket: updates
+  components:
+    - main
+    - restricted
+    - universe
+    - multiverse
+  seed:
+    urls:
+      - https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/
+    branch: noble
+    names:
+      - server
+      - minimal
+      - standard
+      - cloud-image
+  sources-list-deb822: true
+customization:
+  cloud-init:
+    user-data: |
+      #cloud-config
+      groups:
+        - system
+      user:
+        groups: [adm, cdrom, dip, lxd, sudo, video, audio, plugdev, system]
+      chpasswd:
+        expire: true
+        users:
+          - name: ubuntu
+            password: ubuntu
+            type: text
+    meta-data: |
+      dsmode: local
+      instance_id: ubuntu-server
+    network-config: |
+      #cloud-config
+      network:
+        renderer: NetworkManager
+        version: 2
+  extra-ppas:
+    - name: ubuntu-qcom-iot/qcom-ppa
+      fingerprint: 33EF0ACBC6FE252590ABBAF21C70EB0C444248D7
+      keep-enabled: true
+  extra-snaps:
+    - name: snapd
+  fstab:
+    - label: writable
+      mountpoint: /
+      filesystem-type: ext4
+      mount-options: discard,errors=remount-ro
+      fsck-order: 1
+    - label: system-boot
+      mountpoint: /boot/efi/
+      filesystem-type: vfat
+      fsck-order: 1
+    - label: persist
+      mountpoint: /var/persist
+      filesystem-type: ext4
+      fsck-order: 2
+  extra-packages:
+    # GRUB signed EFI boot chain
+    - name: grub-efi-arm64-signed
+    - name: shim-signed
+    - name: grub2-common
+    # update combined-dtb.dtb when a new kernel package is installed
+    - name: linux-scripts-qcom
+    # Qualcomm Dragonwing specific configurations
+    - name: qcom-iot-defaults
+    # Qualcomm Dragonwing specific firmwares
+    - name: linux-firmware-dragonwing
+    # pd-mapper will be used when talking to different DSP
+    - name: protection-domain-mapper
+    # audio support through ALSA
+    - name: alsa-conf-qcom
+    - name: pipewire-alsa
+    - name: alsa-utils
+    # network setting tools
+    - name: network-manager
+    - name: wireless-tools
+    - name: iw
+    # bluetooth support
+    - name: bluez
+    # server only: optimized GPU computing (breaks GUI)
+    - name: qcom-adreno1
+  # setup persist partition mountpoint
+  manual:
+    make-dirs:
+      - path: /var/persist
+        permissions: 0775
+artifacts:
+  img:
+    - name: ubuntu-24.04-preinstalled-server-arm64+dragonwing.img
+  manifest:
+    name: ubuntu-24.04-preinstalled-server-arm64+dragonwing.manifest
