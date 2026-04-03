@@ -55,6 +55,8 @@ customization:
       keep-enabled: true
   extra-snaps:
     - name: snapd
+    - name: gnome-46-2404
+    - name: mesa-2404
   fstab:
     - label: writable
       mountpoint: /
@@ -74,18 +76,17 @@ customization:
     - name: grub-efi-arm64-signed
     - name: shim-signed
     - name: grub2-common
-    # update combined-dtb.dtb when a new kernel package is installed
-    - name: linux-scripts-qcom
-    # Qualcomm Dragonwing specific configurations
-    - name: qcom-iot-defaults
-    # Qualcomm Dragonwing specific firmwares
+    # Dragonwing specific configurations
+    - name: dragonwing-defaults
+    # Dragonwing specific firmwares
     - name: linux-firmware-dragonwing
-    # pd-mapper will be used when talking to different DSP
+    # pd-mapper will be used when talking to different DSPs
     - name: protection-domain-mapper
     # audio support through ALSA
     - name: alsa-conf-qcom
     - name: pipewire-alsa
-    - name: alsa-utils
+    # fix Language Support crashes
+    - name: language-pack-en-base
   # setup persist partition mountpoint
   manual:
     make-dirs:
