@@ -74,25 +74,23 @@ customization:
     - name: grub-efi-arm64-signed
     - name: shim-signed
     - name: grub2-common
-    # update combined-dtb.dtb when a new kernel package is installed
-    - name: linux-scripts-qcom
-    # Qualcomm Dragonwing specific configurations
-    - name: qcom-iot-defaults
-    # Qualcomm Dragonwing specific firmwares
+    # Dragonwing specific configurations
+    - name: dragonwing-defaults
+    # Dragonwing specific firmwares
     - name: linux-firmware-dragonwing
-    # pd-mapper will be used when talking to different DSP
+    # pd-mapper will be used when talking to different DSPs
     - name: protection-domain-mapper
-    # audio support through ALSA
-    - name: alsa-conf-qcom
-    - name: pipewire-alsa
-    - name: alsa-utils
-    # network setting tools
+    # useful for network setting
     - name: network-manager
     - name: wireless-tools
     - name: iw
     # bluetooth support
     - name: bluez
-    # server only: optimized GPU computing (breaks GUI)
+    # aduio support through ALSA
+    - name: alsa-conf-qcom
+    - name: pipewire-alsa
+    - name: alsa-utils
+    # proprietary graphic stack
     - name: qcom-adreno1
   # setup persist partition mountpoint
   manual:
