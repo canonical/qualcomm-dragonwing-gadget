@@ -4,7 +4,7 @@ revision: 2
 architecture: arm64
 series: noble
 class: preinstalled
-kernel: linux-image-qcom
+kernel: linux-qcom
 gadget:
   url: https://github.com/canonical/qualcomm-dragonwing-gadget.git
   type: git
@@ -33,8 +33,10 @@ customization:
       #cloud-config
       groups:
         - system
-      user:
-        groups: [adm, cdrom, dip, lxd, sudo, video, audio, plugdev, system]
+      users:
+        - name: ubuntu
+          groups: adm, cdrom, dip, lxd, sudo, video, audio, plugdev, system
+          shell: /bin/bash
       chpasswd:
         expire: true
         users:
@@ -43,7 +45,7 @@ customization:
             type: text
     meta-data: |
       dsmode: local
-      instance_id: ubuntu-desktop
+      instance-id: ubuntu-desktop
     network-config: |
       #cloud-config
       network:
@@ -87,7 +89,6 @@ customization:
     - name: pipewire-alsa
     # fix Language Support crashes
     - name: language-pack-en-base
-  # setup persist partition mountpoint
   manual:
     make-dirs:
       - path: /var/persist

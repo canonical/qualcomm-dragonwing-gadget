@@ -4,7 +4,7 @@ revision: 2
 architecture: arm64
 series: noble
 class: preinstalled
-kernel: linux-image-qcom
+kernel: linux-qcom
 gadget:
   url: https://github.com/canonical/qualcomm-dragonwing-gadget.git
   type: git
@@ -33,8 +33,10 @@ customization:
       #cloud-config
       groups:
         - system
-      user:
-        groups: [adm, cdrom, dip, lxd, sudo, video, audio, plugdev, system]
+      users:
+        - name: ubuntu
+          groups: adm, cdrom, dip, lxd, sudo, video, audio, plugdev, system
+          shell: /bin/bash
       chpasswd:
         expire: true
         users:
@@ -43,7 +45,7 @@ customization:
             type: text
     meta-data: |
       dsmode: local
-      instance_id: ubuntu-server
+      instance-id: ubuntu-server
     network-config: |
       #cloud-config
       network:
@@ -86,13 +88,12 @@ customization:
     - name: iw
     # bluetooth support
     - name: bluez
-    # aduio support through ALSA
+    # audio support through ALSA
     - name: alsa-conf-qcom
     - name: pipewire-alsa
     - name: alsa-utils
     # proprietary graphic stack
     - name: qcom-adreno1
-  # setup persist partition mountpoint
   manual:
     make-dirs:
       - path: /var/persist
