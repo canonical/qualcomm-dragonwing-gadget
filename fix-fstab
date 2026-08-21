@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sed -i 's/LABEL=persist/PARTLABEL=persist/' /etc/fstab
+rm "${0}"

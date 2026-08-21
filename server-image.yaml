@@ -1,0 +1,103 @@
+name: ubuntu-server-qualcomm-dragonwing-arm64
+display-name: Ubuntu Server Qualcomm Dragonwing arm64
+revision: 2
+architecture: arm64
+series: resolute
+class: preinstalled
+kernel: linux-qcom
+gadget:
+  url: https://github.com/canonical/qualcomm-dragonwing-gadget.git
+  type: git
+  branch: resolute
+rootfs:
+  mirror: http://ports.ubuntu.com/ubuntu-ports/
+  pocket: updates
+  components:
+    - main
+    - restricted
+    - universe
+    - multiverse
+  seed:
+    urls:
+      - https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/
+    branch: resolute
+    names:
+      - server
+      - minimal
+      - standard
+      - cloud-image
+  sources-list-deb822: true
+customization:
+  cloud-init:
+    user-data: |
+      #cloud-config
+      users:
+        - name: ubuntu
+          groups: adm, cdrom, dip, lxd, sudo, video, audio, plugdev
+          shell: /bin/bash
+      chpasswd:
+        expire: true
+        users:
+          - name: ubuntu
+            password: ubuntu
+            type: text
+    meta-data: |
+      dsmode: local
+      instance-id: ubuntu-server
+    network-config: |
+      #cloud-config
+      network:
+        renderer: NetworkManager
+        version: 2
+  extra-ppas:
+    - name: ubuntu-qcom-iot/qcom-ppa
+      fingerprint: 33EF0ACBC6FE252590ABBAF21C70EB0C444248D7
+      keep-enabled: true
+  extra-snaps:
+    - name: snapd
+  fstab:
+    - label: writable
+      mountpoint: /
+      filesystem-type: ext4
+      mount-options: discard,errors=remount-ro
+      fsck-order: 1
+    - label: system-boot
+      mountpoint: /boot/efi/
+      filesystem-type: vfat
+      fsck-order: 1
+    - label: persist
+      mountpoint: /var/lib/tee
+      filesystem-type: ext4
+      mount-options: defaults,x-systemd.makefs
+      fsck-order: 2
+  manual:
+    make-dirs:
+      - path: /var/lib/tee
+        permissions: 0755
+    copy-file:
+      - source: fix-fstab
+        destination: /tmp/fix-fstab
+    execute:
+      - path: /tmp/fix-fstab
+  extra-packages:
+    # GRUB signed EFI boot chain
+    - name: grub-efi-arm64-signed
+    - name: shim-signed
+    - name: grub2-common
+    # Qualcomm Dragonwing specific configurations
+    - name: dragonwing-defaults
+    # network setting tools
+    - name: network-manager
+    - name: iw
+    # bluetooth support
+    - name: bluez
+    # audio support through ALSA
+    - name: pipewire-alsa
+    - name: alsa-utils
+    # proprietary graphic stack
+    - name: qcom-adreno1
+artifacts:
+  img:
+    - name: ubuntu-26.04-preinstalled-server-arm64+dragonwing.img
+  manifest:
+    name: ubuntu-26.04-preinstalled-server-arm64+dragonwing.manifest
