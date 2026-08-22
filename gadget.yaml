@@ -9,9 +9,6 @@ volumes:
         filesystem: vfat
         filesystem-label: system-boot
         role: system-boot
-        content:
-          - source: grub.cfg
-            target: EFI/ubuntu/grub.cfg
       - name: persist
         type: 0FC63DAF-8483-4772-8E79-3D69D8477DE4
         size: 30M
