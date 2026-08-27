@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# The device tree needs to be in a specific partition, provisioned by qdl tool.
+
+set -euo pipefail
+
+cleanup() {
+    case "${1}" in
+        mount ) sudo umount -R "${workdir}" ;&
+        mkdir ) rm -rf "${workdir}" ;&
+        losetup ) sudo losetup -d "${dev}" ;&
+    esac
+    trap - EXIT
+}
+
+# Mount rootfs from the image.
+workdir="$(mktemp -d)"
+dev="$(sudo losetup --find --show --partscan "${@}")"
+trap 'cleanup losetup' EXIT
+sudo mkdir -p "${workdir}"
+trap 'cleanup mkdir' EXIT
+system="$(sudo blkid | awk '$0~"'"$dev"'p.*LABEL=\"writable\"" { sub(":","",$1); print $1 }')"
+sudo mount "${system}" "${workdir}"
+trap 'cleanup mount' EXIT
+
+# Format a 64M fat partition and copy the device tree on it.
+rm -f dtb.bin
+mkfs.vfat -S 4096 -C dtb.bin 65536
+mcopy -i dtb.bin "${workdir}"/lib/firmware/*-qcom/device-tree/qcom/combined-dtb.dtb ::
