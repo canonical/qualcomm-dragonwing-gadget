@@ -55,8 +55,8 @@ customization:
       keep-enabled: true
   extra-snaps:
     - name: snapd
-    - name: gnome-46-2404
-    - name: mesa-2404
+    - name: firefox
+      channel: stable/ubuntu-26.04
   fstab:
     - label: writable
       mountpoint: /
