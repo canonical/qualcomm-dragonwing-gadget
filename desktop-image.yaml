@@ -57,6 +57,8 @@ customization:
     - name: snapd
     - name: firefox
       channel: stable/ubuntu-26.04
+    - name: snapd-desktop-integration
+      channel: stable/ubuntu-26.04
   fstab:
     - label: writable
       mountpoint: /
